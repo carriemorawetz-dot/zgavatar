@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZG-Avatar · Online Business Makery</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --azur: #0256a3; --sky: #89b6da; --coolgrey: #e3e3e8;
+  --sand: #ccb59f; --mandarine: #df8c32; --gold: #f3c559;
+  --text: #2c2c3a; --muted: #7a7a8a; --light: #f6f5f2;
+}
+body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--light); margin: 0; padding: 0; }
+.wrap { padding: 24px 16px 80px; width: 100%; max-width: 100%; overflow-x: hidden; }
+
+/* HEADER */
+.header { background: var(--mandarine); border-radius: 16px; padding: 28px 24px 24px; margin-bottom: 24px; position: relative; overflow: hidden; }
+.header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: var(--gold); opacity: 0.2; border-radius: 50%; pointer-events: none; }
+.eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 8px; position: relative; }
+.header-title { font-family: 'Playfair Display', serif; font-size: clamp(20px, 5vw, 26px); font-weight: 600; color: #fff; line-height: 1.3; position: relative; }
+.header-title em { font-style: italic; color: var(--gold); }
+.header-sub { margin-top: 10px; font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.7; position: relative; }
+.header-badge { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 11px; border-radius: 20px; padding: 4px 14px; margin-top: 12px; position: relative; }
+
+/* PROGRESS */
+.progress-bar { background: var(--coolgrey); border-radius: 20px; height: 6px; margin-bottom: 6px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--mandarine); border-radius: 20px; transition: width 0.4s ease; }
+.progress-label { font-size: 11px; color: var(--muted); text-align: right; margin-bottom: 20px; }
+
+/* CHAPTER */
+.chapter { margin-bottom: 10px; }
+.chapter-header { background: #fff; border: 1px solid var(--coolgrey); border-radius: 12px; padding: 15px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.2s; user-select: none; }
+.chapter-header:hover { border-color: var(--mandarine); }
+.chapter-header.open { border-color: var(--mandarine); border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+.chapter-num { width: 32px; height: 32px; background: var(--mandarine); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+.chapter-num.done { background: #2ecc71; }
+.chapter-info { flex: 1; min-width: 0; }
+.chapter-title { font-size: 14px; font-weight: 500; color: var(--mandarine); }
+.chapter-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.chapter-arrow { font-size: 14px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+.chapter-header.open .chapter-arrow { transform: rotate(180deg); }
+.chapter-body { background: #fff; border: 1px solid var(--mandarine); border-top: none; border-radius: 0 0 12px 12px; padding: 20px 18px 18px; display: none; }
+.chapter-body.open { display: block; }
+
+/* IMPULS BOX */
+.impuls { background: rgba(223,140,50,0.08); border-left: 3px solid var(--mandarine); border-radius: 0 10px 10px 0; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #633806; line-height: 1.7; }
+.impuls-label { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mandarine); margin-bottom: 4px; }
+
+/* FIELDS */
+.field { margin-bottom: 14px; }
+.field label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+.field input, .field textarea { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); background: var(--light); border: 1px solid var(--coolgrey); border-radius: 8px; padding: 9px 12px; outline: none; width: 100%; transition: border-color 0.2s; }
+.field input:focus, .field textarea:focus { border-color: var(--mandarine); background: #fff; }
+.field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
+
+/* TIP */
+.tip { background: rgba(137,182,218,0.12); border-left: 3px solid var(--sky); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 10px 0; font-size: 12px; color: #0256a3cc; line-height: 1.6; }
+.tip strong { font-weight: 500; color: var(--azur); }
+
+/* EXPORT */
+.export-section { background: var(--gold); border-radius: 14px; padding: 22px 22px; margin-top: 28px; }
+.export-title { font-size: 12px; font-weight: 500; color: #412402; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.export-text { font-size: 13px; color: #633806; line-height: 1.7; margin-bottom: 16px; }
+.export-btn { width: 100%; padding: 14px; background: var(--azur); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: #fff; cursor: pointer; transition: opacity 0.2s; }
+.export-btn:hover { opacity: 0.88; }
+.export-btn.copied { background: #2ecc71; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="eyebrow">Marketing Basis für KI · Schritt 1 von 3</div>
+    <h2 class="header-title">Deine Traumkundin<br><em>tief kennenlernen</em></h2>
+    <p class="header-sub">Fülle alle Felder so ehrlich und konkret wie möglich — in deinen eigenen Worten, nicht in Coaching-Sprache. Am Ende kopierst du alles und Claude erstellt deinen fertigen ZG-Avatar Block.</p>
+    <span class="header-badge">⏱ Ca. 45–60 Minuten</span>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+  <div class="progress-label" id="plabel">0 von 6 Bereichen ausgefüllt</div>
+
+  <!-- ═══ BEREICH 1: WER SIE IST ═══ -->
+  <div class="chapter" id="c1">
+    <div class="chapter-header" onclick="tog('c1')">
+      <div class="chapter-num" id="c1n">1</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Wer sie ist</div>
+        <div class="chapter-sub">Persönlichkeit, Alltag, Werte</div>
+      </div>
+      <div class="chapter-arrow">▼</div>
+    </div>
+    <div class="chapter-body" id="c1b">
+      <div class="impuls">
+        <div class="impuls-label">Impuls</div>
+        Denk an eine echte Person — jemanden den du kennst oder dir genau vorstellst. Je konkreter desto besser. Kein "Frauen zwischen 30 und 50" — sondern: wer ist sie wirklich?
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Name deiner Traumkundin</label>
+          <input type="text" id="f1-1" placeholder="z.B. Sandra" oninput="chk('c1')">
+        </div>
+        <div class="field">
+          <label>Alter</label>
+          <input type="text" id="f1-2" placeholder="z.B. 38 Jahre">
+        </div>
+      </div>
+      <div class="field">
+        <label>Lebenssituation, Familienstand, Wohnort-Typ</label>
+        <textarea id="f1-3" placeholder="z.B. verheiratet, 2 Kinder, lebt in einer Kleinstadt, Haus mit Garten..."></textarea>
+      </div>
+      <div class="field">
+        <label>Beruf und berufliche Situation</label>
+        <textarea id="f1-4" placeholder="z.B. seit 5 Jahren selbstständige Ernährungsberaterin, kämpft mit unregelmäßigem Einkommen..."></textarea>
+      </div>
+      <div class="field">
+        <label>Persönlichkeitstyp — wie trifft sie Entscheidungen?</label>
+        <textarea id="f1-5" placeholder="Ist sie eher Kopf- oder Bauchmensch? Introvertiert oder extrovertiert? Perfektionistin oder 'gut genug'? Wie lange überlegt sie bevor sie kauft?"></textarea>
+      </div>
+      <div class="field">
+        <label>Freizeit, Interessen, was liest/schaut sie, wem folgt sie?</label>
+        <textarea id="f1-6" placeholder="Was macht sie nach Feierabend? Welche Podcasts, Bücher, Instagram-Accounts? Was inspiriert sie?"></textarea>
+      </div>
+      <div class="field">
+        <label>Ihre wichtigsten Werte im Leben</label>
+        <textarea id="f1-7" placeholder="z.B. Familie, Freiheit, Authentizität, Sicherheit, Wachstum... Was ist ihr wirklich wichtig?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEREICH 2: IHR GRÖSSTER SCHMERZ ═══ -->
+  <div class="chapter" id="c2">
+    <div class="chapter-header" onclick="tog('c2')">
+      <div class="chapter-num" id="c2n">2</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Ihr größter Schmerz</div>
+        <div class="chapter-sub">Was sie wirklich beschäftigt — tiefer als das Offensichtliche</div>
+      </div>
+      <div class="chapter-arrow">▼</div>
+    </div>
+    <div class="chapter-body" id="c2b">
+      <div class="impuls">
+        <div class="impuls-label">Impuls</div>
+        Schreib nicht was du glaubst was sie sagen würde — schreib was sie wirklich fühlt. Oft ist der wahre Schmerz tiefer als das oberflächliche Problem.
+      </div>
+      <div class="field">
+        <label>Ihr drängenstes Problem — das eine, das wirklich brennt</label>
+        <textarea id="f2-1" placeholder="Was ist ihr größtes Problem gerade? In ihrer Sprache, nicht in deiner Coaching-Sprache." oninput="chk('c2')"></textarea>
+      </div>
+      <div class="field">
+        <label>Was hält sie nachts wach? Welche Gedanken drehen sich im Kreis?</label>
+        <textarea id="f2-2" placeholder="Die 3-Uhr-Gedanken. Was kreist immer wieder? Was kann sie nicht loslassen?"></textarea>
+      </div>
+      <div class="field">
+        <label>Wie lange leidet sie schon darunter? Was hat sie bereits versucht?</label>
+        <textarea id="f2-3" placeholder="Hat sie schon andere Kurse, Coaches, Bücher ausprobiert? Was hat nicht funktioniert?"></textarea>
+      </div>
+      <div class="field">
+        <label>Was kostet sie dieses Problem — an Zeit, Geld, Energie, Lebensqualität?</label>
+        <textarea id="f2-4" placeholder="Was verliert sie täglich weil das Problem ungelöst ist? Konkret, wenn möglich."></textarea>
+      </div>
+      <div class="field">
+        <label>Wie fühlt sie sich dabei — welche Emotionen trägt sie mit sich?</label>
+        <textarea id="f2-5" placeholder="z.B. Scham, Erschöpfung, Ohnmacht, Frustration, Hoffnungslosigkeit... Was dominiert?"></textarea>
+      </div>
+      <div class="field">
+        <label>Schämt sie sich dafür? Versteckt sie es vor anderen?</label>
+        <textarea id="f2-6" placeholder="Was würde sie nie laut sagen? Was ist ihr peinlich oder unangenehm an ihrer Situation?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEREICH 3: IHRE WÜNSCHE & TRÄUME ═══ -->
+  <div class="chapter" id="c3">
+    <div class="chapter-header" onclick="tog('c3')">
+      <div class="chapter-num" id="c3n">3</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Ihre tiefsten Wünsche &amp; Träume</div>
+        <div class="chapter-sub">Was sie sich wirklich wünscht — nicht was sie sagen würde</div>
+      </div>
+      <div class="chapter-arrow">▼</div>
+    </div>
+    <div class="chapter-body" id="c3b">
+      <div class="impuls">
+        <div class="impuls-label">Impuls</div>
+        Nicht die höfliche Antwort — der heimliche Wunsch. Was würde sie sich wünschen wenn sie sicher wäre dass niemand urteilt?
+      </div>
+      <div class="field">
+        <label>Was wünscht sie sich wirklich — der heimliche Wunsch?</label>
+        <textarea id="f3-1" placeholder="Nicht 'mehr Zeit' — sondern konkret: was würde sich in ihrem Leben ändern wenn alles perfekt wäre?" oninput="chk('c3')"></textarea>
+      </div>
+      <div class="field">
+        <label>Wie sieht ihr Traumleben in 3 Jahren aus — konkret?</label>
+        <textarea id="f3-2" placeholder="Beschreibe einen typischen Dienstag in ihrem Traumleben. Was tut sie? Wie fühlt sie sich?"></textarea>
+      </div>
+      <div class="field">
+        <label>Was würde sich in ihrem Alltag verändern wenn ihr Problem gelöst wäre?</label>
+        <textarea id="f3-3" placeholder="Morgens aufwachen — was ist anders? Am Abend — was hat sich verändert?"></textarea>
+      </div>
+      <div class="field">
+        <label>Was würde sie dann tun, wagen, loslassen?</label>
+        <textarea id="f3-4" placeholder="Was traut sie sich gerade nicht? Was hält sie zurück? Was würde sie angehen wenn das Problem weg wäre?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEREICH 4: EINWÄNDE & ÄNGSTE ═══ -->
+  <div class="chapter" id="c4">
+    <div class="chapter-header" onclick="tog('c4')">
+      <div class="chapter-num" id="c4n">4</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Ihre Einwände &amp; Ängste</div>
+        <div class="chapter-sub">Was sie davon abhält — die echten Gründe</div>
+      </div>
+      <div class="chapter-arrow">▼</div>
+    </div>
+    <div class="chapter-body" id="c4b">
+      <div class="impuls">
+        <div class="impuls-label">Impuls</div>
+        Die meisten Einwände sind nicht das was sie sagen — sondern was darunter liegt. "Ich habe keine Zeit" heißt oft "Ich glaube nicht dass es bei mir funktioniert."
+      </div>
+      <div class="field">
+        <label>Was hindert sie daran, jetzt schon Hilfe zu suchen?</label>
+        <textarea id="f4-1" placeholder="Die echten Hindernisse — nicht die rationalen Ausreden." oninput="chk('c4')"></textarea>
+      </div>
+      <div class="field">
+        <label>Welche Ausreden benutzt sie — gegenüber anderen und sich selbst?</label>
+        <textarea id="f4-2" placeholder="z.B. 'Ich warte noch bis...', 'Das ist zu teuer für mich', 'Ich schaffe das alleine'..."></textarea>
+      </div>
+      <div class="field">
+        <label>Ihre größte Angst wenn sie investiert und es klappt nicht</label>
+        <textarea id="f4-3" placeholder="Was ist das Schlimmste was passieren könnte? Was würde sie denken und fühlen?"></textarea>
+      </div>
+      <div class="field">
+        <label>Ihre Angst vor Veränderung — wenn es klappt</label>
+        <textarea id="f4-4" placeholder="Klingt paradox — aber: Was könnte sich verändern das ihr Angst macht? Was verliert sie wenn sie ihr Problem löst?"></textarea>
+      </div>
+      <div class="field">
+        <label>Hat sie schlechte Erfahrungen mit ähnlichen Angeboten gemacht?</label>
+        <textarea id="f4-5" placeholder="Was hat sie schon gekauft und bereut? Was hat sie enttäuscht? Was war zu viel versprochen?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEREICH 5: RISIKO & KAUFENTSCHEIDUNG ═══ -->
+  <div class="chapter" id="c5">
+    <div class="chapter-header" onclick="tog('c5')">
+      <div class="chapter-num" id="c5n">5</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Risiko &amp; Kaufentscheidung</div>
+        <div class="chapter-sub">Was sie zum Ja bringt — und was nicht</div>
+      </div>
+      <div class="chapter-arrow">▼</div>
+    </div>
+    <div class="chapter-body" id="c5b">
+      <div class="impuls">
+        <div class="impuls-label">Impuls</div>
+        Wie kauft sie eigentlich? Impulsiv oder nach langem Überlegen? Wem vertraut sie — und warum?
+      </div>
+      <div class="field">
+        <label>Was müsste passieren damit sie JA sagt?</label>
+        <textarea id="f5-1" placeholder="Was gibt ihr die Sicherheit die sie braucht? Was ist der entscheidende Punkt?" oninput="chk('c5')"></textarea>
+      </div>
+      <div class="field">
+        <label>Was ist für sie ein fairer Preis — und was ist zu teuer, was zu billig?</label>
+        <textarea id="f5-2" placeholder="Wie denkt sie über Preise nach? Was ist ihr Referenzrahmen?"></textarea>
+      </div>
+      <div class="field">
+        <label>Wie trifft sie Kaufentscheidungen — Impuls oder lange Überlegung?</label>
+        <textarea id="f5-3" placeholder="Kauft sie spontan oder schläft sie erst drüber? Fragt sie Freundinnen? Recherchiert sie stundenlang?"></textarea>
+      </div>
+      <div class="field">
+        <label>Wem vertraut sie bei Empfehlungen? Was überzeugt sie?</label>
+        <textarea id="f5-4" placeholder="Fakten, Testimonials, Gefühl, Expertise, persönliche Verbindung — was zieht bei ihr?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEREICH 6: IHRE SPRACHE ═══ -->
+  <div class="chapter" id="c6">
+    <div class="chapter-header" onclick="tog('c6')">
+      <div class="chapter-num" id="c6n">6</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Ihre eigene Sprache</div>
+        <div class="chapter-sub">Echte Sätze — wie sie wirklich spricht</div>
+      </div>
+      <div class="chapter-arrow">▼</div>
+    </div>
+    <div class="chapter-body" id="c6b">
+      <div class="impuls">
+        <div class="impuls-label">Impuls</div>
+        Das ist das Gold. Nicht wie du über ihr Problem sprichst — sondern wie SIE darüber spricht. Echte Sätze, echte Worte. Kein Coaching-Jargon.
+      </div>
+      <div class="field">
+        <label>Welche Worte benutzt sie selbst für ihr Problem?</label>
+        <textarea id="f6-1" placeholder="Nicht 'mangelnde Selbstwirksamkeit' — sondern: 'Ich weiß einfach nicht wo ich anfangen soll.'" oninput="chk('c6')"></textarea>
+      </div>
+      <div class="field">
+        <label>Welche Sätze sagt sie zu sich selbst wenn es nicht klappt?</label>
+        <textarea id="f6-2" placeholder="z.B. 'Ich bin halt so.', 'Das klappt bei anderen aber nicht bei mir.', 'Ich bin zu alt/zu spät/zu...'"></textarea>
+      </div>
+      <div class="field">
+        <label>Was sagt sie zu Freundinnen wenn sie über das Thema spricht?</label>
+        <textarea id="f6-3" placeholder="Wie erklärt sie ihr Problem einer guten Freundin? Welche Formulierungen benutzt sie?"></textarea>
+      </div>
+      <div class="field">
+        <label>Echte Sätze oder Formulierungen die du von ihr kennst (aus Gesprächen, DMs, Kommentaren)</label>
+        <textarea id="f6-4" placeholder="Kopiere hier echte Sätze die du von ihr gehört oder gelesen hast — das sind die wertvollsten."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="export-section">
+    <div class="export-title">🎯 Bereit für Claude — ZG-Avatar erstellen</div>
+    <div class="export-text">Wenn du alle Bereiche ausgefüllt hast — klicke auf den Button. Deine Antworten werden kopiert. Füge sie dann zusammen mit dem Avatar-Prompt in Claude ein.</div>
+    <button class="export-btn" id="ebtn" onclick="doExport()">Alle Antworten kopieren — für Claude ↗</button>
+  </div>
+
+</div>
+<script>
+function tog(id) {
+  const h = document.querySelector(`#${id} .chapter-header`);
+  const b = document.getElementById(`${id}b`);
+  const open = b.classList.contains('open');
+  document.querySelectorAll('.chapter-body').forEach(x => x.classList.remove('open'));
+  document.querySelectorAll('.chapter-header').forEach(x => x.classList.remove('open'));
+  if (!open) { b.classList.add('open'); h.classList.add('open'); }
+}
+
+function chk(id) {
+  const b = document.getElementById(`${id}b`);
+  const inputs = b.querySelectorAll('input, textarea');
+  let filled = false;
+  inputs.forEach(i => { if (i.value.trim().length > 8) filled = true; });
+  const n = document.getElementById(`${id}n`);
+  if (filled) { n.classList.add('done'); n.style.background = '#2ecc71'; }
+  else { n.classList.remove('done'); n.style.background = 'var(--mandarine)'; }
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = document.querySelectorAll('.chapter-num.done').length;
+  document.getElementById('pfill').style.width = (done / 6 * 100) + '%';
+  document.getElementById('plabel').textContent = `${done} von 6 Bereichen ausgefüllt`;
+}
+
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function doExport() {
+  const out = `=== ZG-AVATAR FRAGEBOGEN · ONLINE BUSINESS MAKERY ===
+
+── BEREICH 1: WER SIE IST ──
+Name: ${v('f1-1')} · Alter: ${v('f1-2')}
+Lebenssituation: ${v('f1-3')}
+Beruf und Situation: ${v('f1-4')}
+Persönlichkeitstyp: ${v('f1-5')}
+Freizeit und Interessen: ${v('f1-6')}
+Ihre Werte: ${v('f1-7')}
+
+── BEREICH 2: IHR GRÖSSTER SCHMERZ ──
+Drängenstes Problem: ${v('f2-1')}
+Was sie nachts wach hält: ${v('f2-2')}
+Wie lange / Was bereits versucht: ${v('f2-3')}
+Was es sie kostet: ${v('f2-4')}
+Ihre Emotionen: ${v('f2-5')}
+Scham / Was sie versteckt: ${v('f2-6')}
+
+── BEREICH 3: IHRE TIEFSTEN WÜNSCHE ──
+Heimlicher Wunsch: ${v('f3-1')}
+Traumleben in 3 Jahren: ${v('f3-2')}
+Was sich verändern würde: ${v('f3-3')}
+Was sie dann tun / wagen würde: ${v('f3-4')}
+
+── BEREICH 4: EINWÄNDE & ÄNGSTE ──
+Was sie hindert: ${v('f4-1')}
+Ihre Ausreden: ${v('f4-2')}
+Angst vor Misserfolg: ${v('f4-3')}
+Angst vor Veränderung: ${v('f4-4')}
+Schlechte Erfahrungen: ${v('f4-5')}
+
+── BEREICH 5: KAUFENTSCHEIDUNG ──
+Was sie zum JA bringt: ${v('f5-1')}
+Preiswahrnehmung: ${v('f5-2')}
+Wie sie entscheidet: ${v('f5-3')}
+Wem sie vertraut: ${v('f5-4')}
+
+── BEREICH 6: IHRE SPRACHE ──
+Ihre Worte für ihr Problem: ${v('f6-1')}
+Sätze zu sich selbst: ${v('f6-2')}
+Sätze zu Freundinnen: ${v('f6-3')}
+Echte Zitate: ${v('f6-4')}
+
+=== ENDE ZG-AVATAR FRAGEBOGEN ===`;
+
+  navigator.clipboard.writeText(out).then(() => {
+    const btn = document.getElementById('ebtn');
+    btn.textContent = 'Kopiert ✓ — jetzt in den Avatar-Prompt einfügen';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Alle Antworten kopieren — für Claude ↗'; btn.classList.remove('copied'); }, 3000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = out; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    const btn = document.getElementById('ebtn');
+    btn.textContent = 'Kopiert ✓'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Alle Antworten kopieren — für Claude ↗'; btn.classList.remove('copied'); }, 3000);
+  });
+}
+
+tog('c1');
+</script>
+</body>
+</html>
